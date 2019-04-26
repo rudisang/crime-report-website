@@ -97,7 +97,7 @@ session_start();
     <div class="jumbotron" style="background-color:#343A40">
   <h1 class="display-4" style="color:white">Latest News &amp; Reports!</h1>
   <p class="lead" style="color:white">Login For More Insight.</p>
-  <form class="form-inline my-2 my-lg-0">
+  <form class="form-inline my-2 my-lg-0" action="includes/search.process.php" method="get">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
     </form>

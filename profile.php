@@ -224,15 +224,14 @@ if(empty($_SESSION['username'])){
 
             <input type="hidden" name="owner_id" value="<?php echo $_SESSION['ID']; ?>">
             <?php
-        $variablephp = $_SESSION['username'];
-        $description = 'This is an Emergency!!';
-        $location = $_SESSION['location'];
-        $cell = $_SESSION['number'];
+            $variablephp = $_SESSION['username'];
+            $description = 'This is an Emergency!!';
+            $location = $_SESSION['location'];
+            $cell = $_SESSION['number'];
         ?>
 
           <script>
           var variablejs = "<?php echo $variablephp; ?>" ;
-
           var username = "@<?php echo $variablephp; ?>" ;
           var description = "<?php echo $description; ?>" ;
           var locationb = "<?php echo $location; ?>" ;

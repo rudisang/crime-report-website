@@ -98,8 +98,8 @@ session_start();
   <h1 class="display-4" style="color:white">Latest News &amp; Reports!</h1>
   <p class="lead" style="color:white">Login For More Insight.</p>
   <form class="form-inline my-2 my-lg-0" action="includes/search.process.php" method="get">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      <input class="form-control mr-sm-2" name="search-input" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" name="search" type="submit">Search</button>
     </form>
 </div>
     </section>
@@ -108,9 +108,10 @@ session_start();
             <div class="container">
             <div class="row">
                 <?php 
-                    require 'includes/dbh.inc.php';
-                    
-                    $sql = "SELECT * FROM reports";
+                    if(isset($_GET['search'])){
+                        require 'includes/dbh.inc.php';
+                    $search = $_GET['value'];
+                    $sql = "SELECT * FROM reports WHERE location LIKE '$search%' ";
                     $result = $con->query($sql);
 
                     function time_elapsed_string($datetime, $full = false) {
@@ -165,12 +166,70 @@ session_start();
                         echo "0 results";
                     }
                     $con->close();
+                    }else{
+                        require 'includes/dbh.inc.php';
+                    
+                    $sql = "SELECT * FROM reports";
+                    $result = $con->query($sql);
+
+                    function time_elapsed_string($datetime, $full = false) {
+                        $now = new DateTime;
+                        $ago = new DateTime($datetime);
+                        $diff = $now->diff($ago);
+                    
+                        $diff->w = floor($diff->d / 7);
+                        $diff->d -= $diff->w * 7;
+                    
+                        $string = array(
+                            'y' => 'year',
+                            'm' => 'month',
+                            'w' => 'week',
+                            'd' => 'day',
+                            'h' => 'hour',
+                            'i' => 'minute',
+                            's' => 'second',
+                        );
+                        foreach ($string as $k => &$v) {
+                            if ($diff->$k) {
+                                $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+                            } else {
+                                unset($string[$k]);
+                            }
+                        }
+                    
+                        if (!$full) $string = array_slice($string, 0, 1);
+                        return $string ? implode(', ', $string) . ' ago' : 'just now';
+                    }
+                    
+                    if ($result->num_rows > 0) {
+                        // output data of each row
+                        while($row = $result->fetch_assoc()) {
+                            $time = $row['date_reported'];
+                            $date_reported =  time_elapsed_string($time); 
+                    
+                            echo '<div class="col-md-12 col-lg-4" style="margin-top:20px">
+                            <div class="card" style="width: 18rem;">
+                            <div class="card-body">
+                              <h3 class="card-title">'.$row["title"].' @ '.$row['location'].'</h3>
+                              <p>Reported: '.$date_reported.' </p>
+                              <form method="get" action="includes/readmore.process.inc.php">
+                              <input type="hidden" value="'.$row['id'].'" name="post-id">
+                              <button type="submit" class="btn btn-danger" name="id" id="'.$row['id'].'"  >View Report</button>
+                              </form>
+                            </div>
+                          </div>
+                            </div>';
+                        }
+                    } else {
+                        echo "0 results";
+                    }
+                    $con->close();
+                    }
                     
                 ?>
             </div>
             </div>
     </section>
-
     
 </body>
 </html>

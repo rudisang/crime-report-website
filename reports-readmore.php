@@ -333,6 +333,8 @@ $(document).ready(function(){
             } else {
                 echo "0 results";
             }
+
+
             $con->close();
             
         }
@@ -340,7 +342,59 @@ $(document).ready(function(){
     ?>
 
     </section>
+    
+    <section class="comments">
+        <div class="container">
+            <h2>Comments</h2>
+            <div class="row">
+        <?php 
+            require 'includes/dbh.inc.php';
+            $id = $_GET['id'];
+            $sql = "SELECT * FROM comments WHERE report_id=$id";
+            $result = $con->query($sql);
 
+            if ($result->num_rows > 0) {
+                // output data of each row
+                while($row = $result->fetch_assoc()){
+                    $name = $row['username'];
+                    $comment = $row['message'];
+                    $date = $row['post_date'];
+
+                    echo '<div class="panel">
+                    <span>@'.$name.'</span>
+                    <p>'.$comment.'</p>
+                    <span>'.$date.'</span>
+                    </div>';
+                }
+            } else {
+               echo ' <div class="container">
+                    <h3> 0 Comments </h3>
+                </div>';
+               
+            }
+        ?>
+        </div>
+        </div>
+    <?php 
+        if(isset($_SESSION['username'])){
+
+            $x = $_GET['id'];
+            $y = $_SESSION['username'];
+            echo '
+            <div class="container">
+            <form method="post" action="includes/comments.inc.php">
+            <input type="hidden" name="hidden_id" value="'.$x.'">
+            <textarea class="form-control" name="comment" id="comment" placeholder="Whats on your mind?" cols="30" rows="7"></textarea>
+            <input type="hidden" name="hidden_user" value="'.$y.'">
+            <br>
+            <input class="btn btn-success" type="submit" name="submit-comment" >
+
+        </form>
+            </div>';
+        }
+    ?>
+    </section>
+ 
 </body>
 </html>   
 
